@@ -45,7 +45,7 @@ def update():
 #EMAIL
 
 EMAIL = "divyacse2029@gmail.com"
-EMAIL_PASSWORD = "zbjp ugxe yitz ppwv"
+EMAIL_PASSWORD = "YOUR_PASSWORD"
 
 
 def send_email_otp(receiver, otp):
