@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Update Your Profile</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #005fd1;
+        }
+
+        .back-btn {
+            background: #e0e0e0;
+        }
+
+        #msg {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+    </style>
+
+    </head>
+
+    <body>
+        <div class="card">
+
+    <h1>Update Your Profile</h1>
+
+    <input type="text" id="user_name" placeholder="Username">
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="department" placeholder="Department">
+
+    <select id="degree">
+        <option value="">Select Degree</option>
+        <option value="Btech">BTech</option>
+        <option value="Mtech">MTech</option>
+        <option value="Bsc">BSc</option>
+        <option value="Msc">MSc</option>
+        <option value="phd">PhD</option>
+        <option value="MBA">MBA</option>
+    </select>
+
+    <select id="year">
+        <option value="">Select Year</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+        <option value="5">5th Year</option>
+    </select>
+
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+    </select>
+
+    <textarea id="bio" placeholder="Write your bio"></textarea>
+
+    <input type="text" id="interest" placeholder="Interests (comma separated)">
+
+    <button class="btn save-btn" onclick="update_profile()">Update Profile</button>
+
+    <p id="msg"></p>
+
+    <button class="btn back-btn" onclick="back()">Back</button>
+
+</div>
+
+<script>
+    async function update_profile() {
+    const email = localStorage.getItem("userEmail");
+
+    if (!email) {
+        window.location.href = "/";
+    }
+
+    const data = {
+        email: email,
+        username: document.getElementById("user_name").value,
+        name: document.getElementById("name").value,
+        department: document.getElementById("department").value,
+        degree: document.getElementById("degree").value,
+        year: document.getElementById("year").value,
+        gender: document.getElementById("gender").value,
+        bio: document.getElementById("bio").value,
+        interest: document.getElementById("interest").value
+    };
+
+    const response = await fetch("http://10.3.146.91:8000/api/update-profile", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        document.getElementById("msg").innerText = "Profile Updated Successfully!";
+        setTimeout(() => {
+            window.location.href = "/profile";
+        }, 800);
+    }
+    else {
+        document.getElementById("msg").innerText = result.error;
+    }
+}
+
+function back(){
+    window.location.href = "/profile";
+}
+</script>
+</body>
+</html>

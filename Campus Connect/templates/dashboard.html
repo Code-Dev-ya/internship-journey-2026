@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head> 
+        <title>Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+        <style>
+
+    body {
+        margin: 0;
+        height: 100vh;
+    }
+
+    .app {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .top-bar {
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        background: #3f3333ff;
+        color: white;
+    }
+
+    .content {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+        border-top: 1px solid #bbc646ff;
+        }
+
+    .bottom-nav button {
+        background: none;
+        border: none;
+        font-size: 16px;
+    }
+
+        </style>
+    </head>
+
+
+<body>
+
+<div class="app">
+
+    <div class="top-bar">
+        Campus Connect
+    </div>
+
+    <div class="content">
+        <p>Welcome Divya !!! </p>
+        <p>This is your feed area</p>
+    </div>
+
+    <div class="bottom-nav">
+        <button onclick="goProfile()">Profile</button>
+        <button onclick="goActivity()">Activity</button>
+        <button>Chat</button>
+    </div>
+
+    </div>
+
+    <script>
+        function goProfile(){
+            window.location.href = "/profile";
+        }
+
+        function goActivity(){
+            window.location.href = "/activity";
+        }
+    </script>
+
+</body>
+</html>

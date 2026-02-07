@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Your Activity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<style>
+body {
+    font-family: Arial;
+    background: #0ef3aeff;
+    padding: 10px;
+}
+
+.request-card {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(18, 76, 112, 1);
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: gray;
+    margin-right: 10px;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.action-buttons button {
+    margin-left: 5px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+.accept-btn {
+    background: green;
+    color: white;
+}
+
+.reject-btn {
+    background: red;
+    color: white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Activity</h2>
+
+<div id="requestList"></div>
+
+<button onclick="back_to_dashboard()">Dashboard</button>
+
+<script>
+
+const email = localStorage.getItem("userEmail");
+
+if (!email){
+    alert("Not logged in");
+    window.location.href = "/";
+}
+
+async function loadRequests(){
+
+    const response = await fetch("http://10.3.146.91:8000/api/get-follow-request",{
+        method : "POST",
+        headers : {
+            "Content-Type":"application/json"
+        },
+        body : JSON.stringify({ email: email })
+    });
+
+    const data = await response.json();
+
+    const container = document.getElementById("requestList");
+
+    container.innerHTML = "";
+
+    if (data.length === 0){
+        container.innerHTML = "<p>No pending requests</p>";
+        return;
+    }
+
+    data.forEach(sender => {
+
+        const div = document.createElement("div");
+        div.className = "request-card";
+
+        div.innerHTML = `
+            <div class="profile-pic"></div>
+
+            <div class="user-info">
+                <b>${sender}</b><br>
+                Wants to follow you
+            </div>
+
+            <div class="action-buttons">
+                <button class="accept-btn" onclick="acceptRequest('${sender}', this)">
+                    Accept
+                </button>
+
+                <button class="reject-btn" onclick="rejectRequest('${sender}', this)">
+                    Reject
+                </button>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+async function acceptRequest(sender, btn){
+
+    await fetch("http://10.3.146.91:8000/api/accept-follow-request",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            sender: sender,
+            receiver: email
+        })
+    });
+
+    btn.innerText = "Accepted";
+    btn.disabled = true;
+    btn.style.background = "gray";
+
+    const rejectBtn = btn.parentElement.children[1];
+    rejectBtn.disabled = true;
+    rejectBtn.style.opacity = "0.5";
+}
+
+function rejectRequest(sender, btn){
+
+    const card = btn.parentElement.parentElement;
+    card.remove();
+}
+
+function back_to_dashboard(){
+    window.location.href = "/dashboard";
+}
+
+loadRequests();
+
+</script>
+
+</body>
+</html>

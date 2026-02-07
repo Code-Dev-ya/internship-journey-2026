@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Campus Connect Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        #message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+    </head>
+
+<body>
+
+<div class="card">
+
+    <h2>Campus Connect</h2>
+
+    <input type="email" id="email" placeholder="Enter SRM Mail">
+
+    <button id="SendOTPbtn">Send OTP</button>
+
+    <div id="OTPsection" style="display: none;">
+        <input type="text" id="otp" placeholder="Enter OTP">
+        <button id="verificationBTN">Verify OTP</button>
+    </div>
+
+    <p id="message"></p>
+
+</div>
+
+    <script>
+    const sendBtn = document.getElementById("SendOTPbtn");
+    const verifyBtn = document.getElementById("verificationBTN");
+    const otpSection = document.getElementById("OTPsection");
+    const messageBox = document.getElementById("message");
+
+    sendBtn.onclick = sendOTP;
+    verifyBtn.onclick = verifyOTP;
+
+    window.onload = function () {
+
+        const email = localStorage.getItem("userEmail");
+
+        if (email){
+            messageBox.innerText = "User Already Exists.";
+
+            sendBtn.innerText = "Go to Dashboard";
+
+            sendBtn.onclick = function (){
+                window.location.href = "/dashboard";
+            };
+
+            document.getElementById("email").style.display = "none";
+        }
+    };
+
+    async function sendOTP() {
+        const email = document.getElementById("email").value; 
+        
+        if (!email){
+            messageBox.innerText = "Enter Email first";
+            return;
+        }
+
+        messageBox.innerText ="Sending OTP...";
+
+        const response = await fetch("http://10.3.146.91:8000/send-otp", {
+            method : "POST",
+            headers : {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email:email
+            })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok){
+            messageBox.innerText = data.message;
+            otpSection.style.display = "block";
+        }
+
+        else{
+            messageBox.innerText = data.error;
+        }
+    }
+
+    async function verifyOTP() {
+
+        const email = document.getElementById("email").value;
+        const otp = document.getElementById("otp").value;
+
+        if (!otp) {
+            messageBox.innerText = "Enter The OTP";
+            return;
+        }
+
+        messageBox.innerText = "Verifying OTP...";
+
+        const response = await fetch("http://10.3.146.91:8000/send-otp", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                otp: otp
+            })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+
+        localStorage.setItem("userEmail",email);
+        messageBox.innerText = "Login Successful! | Redirecting....";
+
+        setTimeout(()=>{
+            window.location.href = "/dashboard";
+        },500);
+    }
+    else {
+        messageBox.innerText = data.error;
+    }
+}
+
+    </script>
+
+
+</body>
+
+</html>
